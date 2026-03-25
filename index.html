@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWIM.HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f3ef;
+  --surface: #ffffff;
+  --surface2: #eeede8;
+  --border: #e0dfd8;
+  --text: #18181a;
+  --muted: #8a8984;
+  --accent: #1560ff;
+  --accent-bg: #eaf0ff;
+  --green: #12a66e;
+  --green-bg: #e5f7f1;
+  --purple: #7c3aed;
+  --purple-bg: #f3eeff;
+  --orange: #f05c1e;
+  --orange-bg: #fff1eb;
+  --red: #dc2626;
+  --red-bg: #fff4f4;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Pretendard', -apple-system, sans-serif;
+  --r: 12px;
+  --sh: 0 2px 8px rgba(0,0,0,.06);
+  --sh2: 0 8px 28px rgba(0,0,0,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+.app{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{
+  width:216px;min-width:216px;
+  background:var(--surface);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;bottom:0;
+  display:flex;flex-direction:column;
+  z-index:100;transition:transform .25s ease;
+}
+.logo{padding:22px 18px 18px;border-bottom:1px solid var(--border);}
+.logo-eye{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.logo-txt{font-size:20px;font-weight:700;letter-spacing:-.03em;}
+.logo-txt em{font-style:normal;color:var(--accent);}
+nav{flex:1;overflow-y:auto;padding:10px 8px;}
+.ng{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding:14px 10px 5px;}
+.ni{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:8px;cursor:pointer;
+  font-size:13px;font-weight:500;color:var(--muted);
+  transition:all .13s;margin-bottom:1px;user-select:none;
+}
+.ni:hover{background:var(--surface2);color:var(--text);}
+.ni.active{background:var(--accent-bg);color:var(--accent);font-weight:600;}
+.ni svg{width:15px;height:15px;flex-shrink:0;opacity:.8;}
+.ni .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-left:auto;}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);}
+.mchip{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:500;background:var(--text);color:#fff;padding:2px 8px;border-radius:4px;margin-top:4px;}
+
+/* MAIN */
+.main{margin-left:216px;flex:1;min-height:100vh;}
+.topbar{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.tl{display:flex;align-items:center;gap:12px;}
+.pg-title{font-size:16px;font-weight:700;letter-spacing:-.01em;}
+.pg-sub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:1px;}
+.ham{display:none;width:34px;height:34px;border-radius:7px;border:1px solid var(--border);background:none;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+.ham span{width:15px;height:1.5px;background:var(--text);border-radius:1px;display:block;}
+.content{padding:24px 28px;}
+.page{display:none;}.page.active{display:block;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .13s;}
+.btn-dark{background:var(--text);color:#fff;}.btn-dark:hover{background:#2a2a2e;}
+.btn-ghost{background:none;color:var(--text);border:1px solid var(--border);}.btn-ghost:hover{background:var(--surface2);}
+.btn-blue{background:var(--accent);color:#fff;}.btn-blue:hover{background:#1250e0;}
+.btn-green{background:var(--green);color:#fff;}.btn-green:hover{background:#0e9060;}
+.btn-purple{background:var(--purple);color:#fff;}.btn-purple:hover{background:#6828d4;}
+.btn-sm{padding:6px 11px;font-size:11.5px;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin-bottom:18px;}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:13.5px;font-weight:700;}
+.card-body{padding:18px;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:22px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat.c-blue::before{background:var(--accent);}
+.stat.c-green::before{background:var(--green);}
+.stat.c-purple::before{background:var(--purple);}
+.stat.c-orange::before{background:var(--orange);}
+.stat.c-dark::before{background:var(--text);}
+.slbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+.sval{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1;}
+.ssub{font-size:11px;color:var(--muted);margin-top:4px;}
+.stag{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:4px;margin-top:6px;}
+.stag.up{background:var(--green-bg);color:var(--green);}
+.stag.neu{background:var(--surface2);color:var(--muted);}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+thead th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;color:var(--muted);text-transform:uppercase;padding:10px 16px;border-bottom:1px solid var(--border);font-weight:500;}
+tbody td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:13px;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--surface2);}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:600;font-family:var(--mono);}
+.b-blue{background:var(--accent-bg);color:var(--accent);}
+.b-green{background:var(--green-bg);color:var(--green);}
+.b-purple{background:var(--purple-bg);color:var(--purple);}
+.b-orange{background:var(--orange-bg);color:var(--orange);}
+.b-gray{background:var(--surface2);color:var(--muted);}
+.b-red{background:var(--red-bg);color:var(--red);}
+.amt{font-family:var(--mono);font-weight:500;}
+.amt.pos{color:var(--green);}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.32);backdrop-filter:blur(3px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:460px;box-shadow:var(--sh2);animation:mIn .18s ease;}
+@keyframes mIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.mhead{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.mtitle{font-size:15px;font-weight:700;}
+.mx{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;font-size:15px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.mx:hover{background:var(--surface2);color:var(--text);}
+.mbody{padding:18px 22px;}
+.mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+
+/* FORM */
+.fg{margin-bottom:14px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+label{display:block;font-size:11.5px;font-weight:600;margin-bottom:5px;}
+input,select,textarea{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:7px;background:var(--bg);font-family:var(--sans);font-size:13px;color:var(--text);outline:none;transition:border-color .13s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+textarea{resize:vertical;min-height:65px;}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.cal-lbl{font-size:19px;font-weight:700;letter-spacing:-.02em;min-width:130px;}
+.cal-arr{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.cal-arr:hover{background:var(--surface2);}
+.legend{display:flex;gap:12px;margin-left:auto;flex-wrap:wrap;}
+.legend span{font-size:10.5px;display:flex;align-items:center;gap:4px;color:var(--muted);}
+.legend span b{width:8px;height:8px;border-radius:2px;display:inline-block;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-dow{text-align:center;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;padding:6px 0;}
+.cal-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:96px;padding:5px 5px 4px;cursor:pointer;transition:border-color .13s;}
+.cal-cell:hover{border-color:var(--accent);}
+.cal-cell.empty{background:transparent;border-color:transparent;cursor:default;}
+.cal-cell.today .daynum{background:var(--accent);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.daynum{font-size:11.5px;font-weight:600;width:20px;height:20px;display:flex;align-items:center;justify-content:center;margin-bottom:3px;}
+.cal-cell.sun .daynum{color:var(--red);}
+.cal-cell.sat .daynum{color:var(--accent);}
+.cal-cell.drag-over{border-color:var(--accent)!important;background:var(--accent-bg)!important;}
+.ev{font-size:9.5px;padding:2px 4px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:grab;font-weight:500;user-select:none;transition:opacity .13s;}
+.ev:active{cursor:grabbing;}
+.ev.dragging{opacity:.25;}
+.ev.ep{background:var(--accent-bg);color:var(--accent);}
+.ev.eg{background:var(--green-bg);color:var(--green);}
+.ev.es{background:var(--purple-bg);color:var(--purple);}
+.ev.ec{background:var(--orange-bg);color:var(--orange);}
+
+/* LESSON ROW */
+.lrow{display:grid;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.lrow:last-child{border-bottom:none;}
+.l5{grid-template-columns:58px 1fr 80px 90px 30px;}
+.ltime{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.lfee{font-family:var(--mono);font-weight:600;}
+.del{width:26px;height:26px;border-radius:5px;border:1px solid var(--border);background:none;cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.del:hover{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+
+/* DELIVERY ROW */
+.drow{display:grid;grid-template-columns:1fr 70px 70px 90px 30px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.drow:last-child{border-bottom:none;}
+
+/* MEMBER */
+.mfilter{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;}
+.mfbtn{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .13s;color:var(--muted);}
+.mfbtn:hover:not(.active){background:var(--surface2);color:var(--text);}
+.mfbtn.active{background:var(--text);color:#fff;border-color:var(--text);}
+.mcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+.mcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:15px;cursor:pointer;transition:all .15s;box-shadow:var(--sh);}
+.mcard:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:var(--sh2);}
+.mavt{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;margin-bottom:11px;}
+.mname{font-size:13.5px;font-weight:700;margin-bottom:3px;}
+.mmeta{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.mnote{font-size:11px;color:var(--muted);line-height:1.5;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+
+/* SALARY */
+.ssum{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px;}
+.sitem{background:var(--surface2);border-radius:9px;padding:13px 15px;}
+.slb{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.sv{font-size:19px;font-weight:700;font-family:var(--mono);letter-spacing:-.01em;}
+.sv.ac{color:var(--accent);}
+
+/* MONTH TABS */
+.mtabs{display:flex;gap:5px;margin-bottom:18px;flex-wrap:wrap;}
+.mtab{padding:4px 11px;border-radius:5px;border:1px solid var(--border);background:var(--surface);font-size:11.5px;font-family:var(--mono);cursor:pointer;transition:all .13s;color:var(--muted);}
+.mtab.active{background:var(--text);color:#fff;border-color:var(--text);}
+
+/* TWO COL */
+.twocol{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start;}
+@media(max-width:1050px){.twocol{grid-template-columns:1fr;}}
+
+/* INCOME BARS */
+.ibar{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.iblbl{font-size:11px;width:72px;color:var(--muted);flex-shrink:0;}
+.ibtrack{flex:1;height:5px;background:var(--border);border-radius:3px;}
+.ibfill{height:100%;border-radius:3px;transition:width .5s ease;}
+.ibval{font-family:var(--mono);font-size:11px;font-weight:500;min-width:76px;text-align:right;}
+
+/* CALC */
+.calcbox{background:var(--surface2);border-radius:10px;padding:15px;text-align:center;margin-top:4px;}
+.cblbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.cbval{font-size:26px;font-weight:700;font-family:var(--mono);color:var(--accent);}
+
+/* ACCENT LINE */
+.aline{height:3px;width:100%;border-radius:2px;margin-bottom:22px;}
+
+/* BACKDROP */
+.backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:99;}
+
+/* PLACE & NET */
+.place-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--muted);background:var(--surface2);padding:1px 6px;border-radius:4px;font-family:var(--mono);}
+.net-val{font-family:var(--mono);font-weight:600;color:var(--green);}
+.cost-note{font-size:10px;color:var(--red);font-family:var(--mono);margin-left:2px;}
+/* DETAIL MODAL rows */
+.dt-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.dt-row:last-child{border-bottom:none;}
+.dt-lbl{color:var(--muted);font-size:12px;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:none;}
+  .backdrop.open{display:block;}
+  .main{margin-left:0;}
+  .ham{display:flex;}
+  .content{padding:16px;}
+  .topbar{padding:12px 16px;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .fr{grid-template-columns:1fr;}
+  .l5{grid-template-columns:48px 1fr 76px 28px;}
+  .l5 .fcol{display:none;}
+  .drow{grid-template-columns:1fr 60px 80px 28px;}
+  .drow .dcol{display:none;}
+  .mcards{grid-template-columns:1fr 1fr;}
+  .cal-cell{min-height:64px;}
+  .legend{display:none;}
+}
+@media(max-width:480px){
+  .mcards{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;max-width:380px;width:100%;text-align:center;box-shadow:var(--sh2);">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Personal Manager</div>
+    <div style="font-size:28px;font-weight:700;letter-spacing:-.03em;margin-bottom:6px;">SWIM<em style="font-style:normal;color:var(--accent);">.</em>HQ</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:32px;">수영 강사 개인 관리 앱</div>
+    <button id="google-login-btn" onclick="signInWithGoogle()" style="width:100%;padding:12px 20px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:14px;font-weight:600;font-family:var(--sans);display:flex;align-items:center;justify-content:center;gap:10px;transition:all .15s;">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z"/></svg>
+      Google 계정으로 로그인
+    </button>
+    <div id="login-status" style="margin-top:16px;font-size:12px;color:var(--muted);min-height:18px;"></div>
+  </div>
+</div>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen" style="position:fixed;inset:0;background:var(--bg);z-index:9998;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center">
+    <div style="font-size:22px;font-weight:700;letter-spacing:-.03em;margin-bottom:8px;">SWIM<em style="font-style:normal;color:var(--accent);">.</em>HQ</div>
+    <div style="font-size:12px;color:var(--muted);font-family:var(--mono);">Loading...</div>
+  </div>
+</div>
+
+<div class="app" id="main-app" style="display:none;">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-eye">Personal Manager</div>
+    <div class="logo-txt">SWIM<em>.</em>HQ</div>
+  </div>
+  <nav>
+    <div class="ng">메인</div>
+    <div class="ni active" data-pg="dashboard" onclick="go('dashboard',this)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      대시보드
+    </div>
+    <div class="ng">스케줄</div>
+    <div class="ni" data-pg="calendar" onclick="go('calendar',this)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="3" width="14" height="12" rx="1.5"/><path d="M5 1v4M11 1v4M1 7h14"/></svg>
+      캘린더
+    </div>
+    <div class="ng">수업</div>
+    <div class="ni" data-pg="private" onclick="go('private',this)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="6" r="3.5"/><path d="M2 14c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5"/></svg>
+      개인 레슨
+      <span class="dot" style="background:var(--accent)"></span>
+    </div>
+    <div class="ni" data-pg="group" onclick="go('group',this)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="5.5" cy="5" r="2.5"/><circle cx="10.5" cy="5" r="2.5"/><path d="M1 14c0-2.5 2-4.5 4.5-4.5M15 14c0-2.5-2-4.5-4.5-4.5"/><path d="M5.5 9.5a5 5 0 015 0"/></svg>
+      단체 강습
+      <span class="dot" style="background:var(--green)"></span>
+    </div>
+    <div class="ni" data-pg="special" onclick="go('special',this)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="8,1 10,6 15,6 11,9.5 12.5,15 8,11.5 3.5,15 5,9.5 1,6 6,6"/></svg>
+      특강
+      <span class="dot" style="background:var(--purple)"></span>
+    </div>
+    <div class="ng">수입</div>
+    <div class="ni" data-pg="salary" onclick="go('salary',this)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M5 4V3a2 2 0 014 0v1"/><circle cx="8" cy="9" r="1.8"/></svg>
+      급여 정산
+    </div>
+    <div class="ni" data-pg="coupang" onclick="go('coupang',this)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4l6-3 6 3v8l-6 3-6-3V4z"/><path d="M8 1v14M2 4l6 3 6-3"/></svg>
+      쿠팡 배송
+    </div>
+    <div class="ng">회원</div>
+    <div class="ni" data-pg="members" onclick="go('members',this)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3.3 2.2-6 5-6"/><circle cx="12" cy="10" r="3"/><path d="M9 14h6"/></svg>
+      회원 관리
+    </div>
+  </nav>
+  <div class="sb-foot">
+    <div>이번 달</div>
+    <div class="mchip" id="sb-month">—</div>
+  </div>
+</aside>
+
+<div class="backdrop" id="backdrop" onclick="closeSb()"></div>
+
+<!-- MAIN -->
+<main class="main">
+  <header class="topbar">
+    <div class="tl">
+      <button class="ham" id="ham" onclick="toggleSb()"><span></span><span></span><span></span></button>
+      <div>
+        <div class="pg-title" id="pg-title">대시보드</div>
+        <div class="pg-sub" id="pg-sub">오늘의 현황</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div id="tb-act"></div>
+      <div style="display:flex;align-items:center;gap:8px;padding-left:10px;border-left:1px solid var(--border)">
+        <span id="user-name" style="font-size:12px;color:var(--muted);font-family:var(--mono);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+        <button onclick="signOutUser()" style="padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:none;font-size:11px;cursor:pointer;color:var(--muted);font-family:var(--sans);transition:all .13s;" onmouseover="this.style.background='var(--red-bg)';this.style.color='var(--red)'" onmouseout="this.style.background='none';this.style.color='var(--muted)'">로그아웃</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats" id="d-stats"></div>
+      <div class="twocol">
+        <div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">오늘 레슨</div><span class="badge b-blue" id="d-cnt">0개</span></div>
+            <div class="card-body" id="d-today"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">수입 분포</div><span style="font-size:11px;color:var(--muted)">이번달</span></div>
+            <div class="card-body" id="d-bars"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">최근 회원</div></div>
+            <div class="card-body" id="d-members" style="padding:12px 16px"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">메모</div></div>
+            <div class="card-body">
+              <textarea id="d-memo" placeholder="이번달 메모..." style="width:100%;min-height:90px;border:none;background:transparent;resize:none;font-family:var(--sans);font-size:13px;outline:none" oninput="saveMemo()"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="page" id="page-calendar">
+      <div class="cal-nav">
+        <button class="cal-arr" onclick="chM(-1)"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 1.5L3.5 5.5 7 9.5"/></svg></button>
+        <div class="cal-lbl" id="cal-lbl"></div>
+        <button class="cal-arr" onclick="chM(1)"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 1.5l3.5 4L4 9.5"/></svg></button>
+        <div class="legend">
+          <span><b style="background:var(--accent)"></b>개인</span>
+          <span><b style="background:var(--green)"></b>단체</span>
+          <span><b style="background:var(--purple)"></b>특강</span>
+          <span><b style="background:var(--orange)"></b>쿠팡</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:12px">
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVATE -->
+    <div class="page" id="page-private">
+      <div class="aline" style="background:var(--accent)"></div>
+      <div class="mtabs" id="pt"></div>
+      <div class="twocol">
+        <div class="card">
+          <div class="card-head"><div class="card-title">개인 레슨 목록</div><span class="badge b-blue" id="pvt-tot">₩0</span></div>
+          <div class="card-body" style="padding:0 16px 16px" id="pvt-list"></div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">레슨비 계산기</div></div>
+            <div class="card-body">
+              <div class="fg"><label>횟수</label><input type="number" id="c-n" placeholder="예: 8" oninput="calc()"></div>
+              <div class="fg"><label>회당 금액 (원)</label><input type="number" id="c-p" placeholder="예: 50000" oninput="calc()"></div>
+              <div class="calcbox"><div class="cblbl">총 레슨비</div><div class="cbval" id="c-r">₩0</div></div>
+              <div style="margin-top:12px"><label>분할 시</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px" id="c-sp"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP -->
+    <div class="page" id="page-group">
+      <div class="aline" style="background:var(--green)"></div>
+      <div class="mtabs" id="gt"></div>
+      <div class="stats" id="g-stats"></div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">단체 강습 목록</div><span class="badge b-green" id="grp-tot">₩0</span></div>
+        <div class="card-body" style="padding:0 16px 16px" id="grp-list"></div>
+      </div>
+    </div>
+
+    <!-- SPECIAL -->
+    <div class="page" id="page-special">
+      <div class="aline" style="background:var(--purple)"></div>
+      <div class="mtabs" id="st"></div>
+      <div class="stats" id="s-stats"></div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">특강 목록</div><span class="badge b-purple" id="spc-tot">₩0</span></div>
+        <div class="card-body" style="padding:0 16px 16px" id="spc-list"></div>
+      </div>
+    </div>
+
+    <!-- SALARY -->
+    <div class="page" id="page-salary">
+      <div class="mtabs" id="salt"></div>
+      <div class="ssum" id="sal-sum"></div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">수입 내역</div><button class="btn btn-ghost btn-sm" onclick="openM('modal-salary')">+ 추가</button></div>
+        <div style="overflow:auto">
+          <table><thead><tr><th>날짜</th><th>수입원</th><th>내용</th><th>금액</th><th>상태</th><th></th></tr></thead>
+          <tbody id="sal-tbody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- COUPANG -->
+    <div class="page" id="page-coupang">
+      <div class="mtabs" id="cpt"></div>
+      <div class="stats" id="cp-stats"></div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">배송 기록</div><button class="btn btn-ghost btn-sm" onclick="openM('modal-coupang')">+ 추가</button></div>
+        <div class="card-body" style="padding:0 16px 16px">
+          <div class="drow" style="font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;padding-bottom:6px;border-bottom:2px solid var(--border)">
+            <div>날짜 / 메모</div><div>건수</div><div class="dcol">거리</div><div>수입</div><div></div>
+          </div>
+          <div id="cp-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div class="page" id="page-members">
+      <div class="mfilter">
+        <button class="mfbtn active" onclick="filterM('all',this)">전체</button>
+        <button class="mfbtn" onclick="filterM('private',this)">개인 레슨</button>
+        <button class="mfbtn" onclick="filterM('group',this)">단체 강습</button>
+        <button class="mfbtn" onclick="filterM('special',this)">특강</button>
+      </div>
+      <div class="mcards" id="m-cards"></div>
+    </div>
+
+  </div>
+</main>
+</div></div>
+
+<!-- MODALS -->
+<div class="overlay" id="modal-lesson">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle" id="l-title">레슨 추가</div><button class="mx" onclick="closeM('modal-lesson')">✕</button></div>
+    <div class="mbody">
+      <div class="fr"><div class="fg"><label>날짜</label><input type="date" id="l-date"></div><div class="fg"><label>시간</label><input type="time" id="l-time"></div></div>
+      <div class="fg"><label>회원 이름</label><input type="text" id="l-member" placeholder="이름"></div>
+      <div class="fr">
+        <div class="fg"><label>레슨 종류</label><select id="l-type" onchange="onTypeChange()"><option value="private">개인 레슨</option><option value="group">단체 강습</option><option value="special">특강</option></select></div>
+        <div class="fg"><label>장소</label><input type="text" id="l-place" placeholder="예: OO수영장, OO센터"></div>
+      </div>
+      <div class="fr">
+        <div class="fg"><label>수강료 (원)</label><input type="number" id="l-fee" placeholder="0" oninput="updateNetFee()"></div>
+        <div class="fg" id="cost-group" style="display:none"><label>대관비 (원) <span style="font-weight:400;color:var(--muted)">특강 전용</span></label><input type="number" id="l-cost" placeholder="0" oninput="updateNetFee()"></div>
+      </div>
+      <div id="net-preview" style="display:none;background:var(--surface2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="color:var(--muted)">수강료</span><span class="amt pos" id="np-fee">₩0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <span style="color:var(--muted)">대관비</span><span class="amt" style="color:var(--red)" id="np-cost">-₩0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-weight:700">
+          <span>순수익</span><span class="amt pos" id="np-net">₩0</span>
+        </div>
+      </div>
+      <div class="fg"><label>메모</label><textarea id="l-memo" placeholder="특이사항, 레슨 내용 등"></textarea></div>
+    </div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeM('modal-lesson')">취소</button><button class="btn btn-blue" onclick="saveLesson()">저장</button></div>
+  </div>
+</div>
+
+<!-- 상세 모달 -->
+<div class="overlay" id="modal-detail">
+  <div class="modal" style="max-width:400px">
+    <div class="mhead"><div class="mtitle" id="dt-title">상세 내역</div><button class="mx" onclick="closeM('modal-detail')">✕</button></div>
+    <div class="mbody" id="dt-body"></div>
+    <div class="mfoot"><button class="btn btn-ghost btn-sm" id="dt-del-btn">삭제</button><button class="btn btn-dark btn-sm" onclick="closeM('modal-detail')">닫기</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-salary">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle">수입 추가</div><button class="mx" onclick="closeM('modal-salary')">✕</button></div>
+    <div class="mbody">
+      <div class="fr"><div class="fg"><label>날짜</label><input type="date" id="s-date"></div><div class="fg"><label>수입원</label><select id="s-src"><option>수영장 급여</option><option>개인 레슨</option><option>단체 강습</option><option>특강</option><option>쿠팡</option><option>기타</option></select></div></div>
+      <div class="fg"><label>내용</label><input type="text" id="s-desc" placeholder="예: 3월 급여"></div>
+      <div class="fr"><div class="fg"><label>금액 (원)</label><input type="number" id="s-amt" placeholder="0"></div><div class="fg"><label>상태</label><select id="s-stat"><option>입금완료</option><option>정산예정</option><option>미지급</option></select></div></div>
+    </div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeM('modal-salary')">취소</button><button class="btn btn-blue" onclick="saveSalary()">저장</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-coupang">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle">배송 기록 추가</div><button class="mx" onclick="closeM('modal-coupang')">✕</button></div>
+    <div class="mbody">
+      <div class="fr"><div class="fg"><label>날짜</label><input type="date" id="cp-d"></div><div class="fg"><label>배송 건수</label><input type="number" id="cp-o" placeholder="예: 25"></div></div>
+      <div class="fr"><div class="fg"><label>수입 (원)</label><input type="number" id="cp-i" placeholder="0"></div><div class="fg"><label>거리 (km)</label><input type="number" id="cp-dist" placeholder="예: 45"></div></div>
+      <div class="fg"><label>메모</label><input type="text" id="cp-m" placeholder="구역, 특이사항 등"></div>
+    </div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeM('modal-coupang')">취소</button><button class="btn btn-blue" onclick="saveCoupang()">저장</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-member">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle">회원 추가</div><button class="mx" onclick="closeM('modal-member')">✕</button></div>
+    <div class="mbody">
+      <div class="fr"><div class="fg"><label>이름</label><input type="text" id="m-nm" placeholder="회원 이름"></div><div class="fg"><label>연락처</label><input type="tel" id="m-ph" placeholder="010-0000-0000"></div></div>
+      <div class="fr"><div class="fg"><label>레슨 종류</label><select id="m-tp"><option value="private">개인 레슨</option><option value="group">단체 강습</option><option value="special">특강</option></select></div><div class="fg"><label>월 레슨비</label><input type="number" id="m-fee" placeholder="0"></div></div>
+      <div class="fg"><label>등록일</label><input type="date" id="m-st"></div>
+      <div class="fg"><label>특이사항</label><textarea id="m-nt" placeholder="수영 실력, 목표, 주의사항 등"></textarea></div>
+    </div>
+    <div class="mfoot"><button class="btn btn-ghost" onclick="closeM('modal-member')">취소</button><button class="btn btn-blue" onclick="saveMember()">저장</button></div>
+  </div>
+</div>
+
+<script type="module">
+// ══════════════════════════════════════════
+// FIREBASE
+// ══════════════════════════════════════════
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, onSnapshot }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB9vp1tROW5Dn8G8hoYyX7lJez6kIETzqM",
+  authDomain: "projectv1hd.firebaseapp.com",
+  projectId: "projectv1hd",
+  storageBucket: "projectv1hd.firebasestorage.app",
+  messagingSenderId: "534459352474",
+  appId: "1:534459352474:web:3924bd569f27ef9626e623"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
+let currentUid = null;
+let unsubSnap  = null;
+
+window.signInWithGoogle = async () => {
+  document.getElementById('login-status').textContent = '로그인 중...';
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch(e) {
+    document.getElementById('login-status').textContent = '로그인 실패. 팝업이 차단됐을 수 있어요.';
+  }
+};
+
+window.signOutUser = async () => {
+  if(unsubSnap) unsubSnap();
+  await signOut(auth);
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUid = user.uid;
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display  = 'none';
+    document.getElementById('main-app').style.display      = 'flex';
+    document.getElementById('user-name').textContent       = user.displayName || user.email;
+
+    const userDoc = doc(db, 'users', currentUid);
+    if(unsubSnap) unsubSnap();
+    unsubSnap = onSnapshot(userDoc, (snap) => {
+      if (snap.exists()) {
+        const d = snap.data();
+        S.lessons  = d.lessons  || [];
+        S.salary   = d.salary   || [];
+        S.coupang  = d.coupang  || [];
+        S.members  = d.members  || [];
+        S.memo     = d.memo     || '';
+      }
+      render(S.page);
+    });
+    go('dashboard', document.querySelector('[data-pg="dashboard"]'));
+  } else {
+    currentUid = null;
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display   = 'flex';
+    document.getElementById('main-app').style.display       = 'none';
+  }
+});
+
+async function save() {
+  if (!currentUid) return;
+  try {
+    await setDoc(doc(db, 'users', currentUid), {
+      lessons: S.lessons, salary: S.salary,
+      coupang: S.coupang, members: S.members, memo: S.memo,
+    });
+  } catch(e) { console.error('저장 실패:', e); }
+}
+
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+let S = {
+  lessons:[], salary:[], coupang:[], members:[], memo:'',
+  page:'dashboard', calY:new Date().getFullYear(), calM:new Date().getMonth(),
+  selY:new Date().getFullYear(), selM:new Date().getMonth(),
+};
+
+
+// ═══════════════════════════════════
+// ROUTING
+// ═══════════════════════════════════
+const META = {
+  dashboard:['대시보드','오늘의 현황'],
+  calendar: ['캘린더','일정 관리'],
+  private:  ['개인 레슨','1:1 레슨 관리'],
+  group:    ['단체 강습','그룹 수업 관리'],
+  special:  ['특강','집중 특강 관리'],
+  salary:   ['급여 정산','통합 수입 관리'],
+  coupang:  ['쿠팡 배송','배송 수입 기록'],
+  members:  ['회원 관리','등록 회원 현황'],
+};
+const ADDACT = {
+  dashboard:()=>openLesson(),
+  calendar: ()=>openLesson(),
+  private:  ()=>openLesson('private'),
+  group:    ()=>openLesson('group'),
+  special:  ()=>openLesson('special'),
+  salary:   ()=>openM('modal-salary'),
+  coupang:  ()=>openM('modal-coupang'),
+  members:  ()=>openM('modal-member'),
+};
+const BTNCLS = {private:'btn-blue',group:'btn-green',special:'btn-purple',members:'btn-dark'};
+const BTNLBL = {private:'+ 개인 레슨',group:'+ 단체 강습',special:'+ 특강',members:'+ 회원'};
+
+function go(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  else document.querySelector(`[data-pg="${id}"]`)?.classList.add('active');
+  S.page=id;
+  const [t,s]=META[id]||[id,''];
+  document.getElementById('pg-title').textContent=t;
+  document.getElementById('pg-sub').textContent=s;
+  const cls=BTNCLS[id]||'btn-dark', lbl=BTNLBL[id]||'+ 추가';
+  document.getElementById('tb-act').innerHTML=`<button class="btn ${cls}" onclick="ADDACT['${id}']()">${lbl}</button>`;
+  render(id);
+  closeSb();
+}
+
+// ═══════════════════════════════════
+// MODAL
+// ═══════════════════════════════════
+function openM(id){
+  document.getElementById(id).classList.add('open');
+  const td=new Date().toISOString().split('T')[0];
+  document.querySelectorAll(`#${id} input[type=date]`).forEach(i=>{ if(!i.value) i.value=td; });
+}
+function closeM(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
+
+function openLesson(type, date){
+  const labels={private:'개인 레슨 추가',group:'단체 강습 추가',special:'특강 추가'};
+  document.getElementById('l-title').textContent = type ? labels[type] : '레슨 추가';
+  if(type) document.getElementById('l-type').value=type;
+  openM('modal-lesson');
+  if(date) document.getElementById('l-date').value=date;
+}
+
+// ═══════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════
+function toggleSb(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('backdrop').classList.toggle('open'); }
+function closeSb(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('backdrop').classList.remove('open'); }
+
+// ═══════════════════════════════════
+// UTILS
+// ═══════════════════════════════════
+const fmt = n => '₩' + Number(n||0).toLocaleString();
+function fmtD(s){ if(!s) return ''; const d=new Date(s+'T00:00:00'); return `${d.getMonth()+1}/${d.getDate()}`; }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function inMonth(arr){ return arr.filter(x=>{ const d=new Date(x.date); return d.getFullYear()===S.selY && d.getMonth()===S.selM; }); }
+function inMonthNow(arr){ const n=new Date(); return arr.filter(x=>{ const d=new Date(x.date); return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth(); }); }
+
+function typeBadge(t){ const m={private:['b-blue','개인'],group:['b-green','단체'],special:['b-purple','특강']}; const [c,l]=m[t]||['b-gray',t]; return `<span class="badge ${c}">${l}</span>`; }
+function typeLabel(t){ return {private:'개인 레슨',group:'단체 강습',special:'특강'}[t]||t; }
+function statusBadge(s){ const m={'입금완료':'b-green','정산예정':'b-orange','미지급':'b-red'}; return `<span class="badge ${m[s]||'b-gray'}">${s}</span>`; }
+function srcBadge(s){ const m={'수영장 급여':'b-green','개인 레슨':'b-blue','단체 강습':'b-green','특강':'b-purple','쿠팡':'b-orange','기타':'b-gray'}; return `<span class="badge ${m[s]||'b-gray'}">${s}</span>`; }
+
+// ═══════════════════════════════════
+// SAVES
+// ═══════════════════════════════════
+function saveLesson(){
+  const type = document.getElementById('l-type').value;
+  const l = {
+    id: Date.now(),
+    date:   document.getElementById('l-date').value,
+    time:   document.getElementById('l-time').value,
+    member: document.getElementById('l-member').value.trim(),
+    type,
+    place:  document.getElementById('l-place').value.trim(),
+    fee:    Number(document.getElementById('l-fee').value)||0,
+    cost:   type==='special' ? (Number(document.getElementById('l-cost').value)||0) : 0,
+    memo:   document.getElementById('l-memo').value,
+  };
+  if(!l.member){ alert('회원 이름을 입력하세요.'); return; }
+  S.lessons.push(l); save(); closeM('modal-lesson');
+  ['l-date','l-time','l-member','l-place','l-fee','l-cost','l-memo'].forEach(i=>{const el=document.getElementById(i);if(el)el.value='';});
+  document.getElementById('cost-group').style.display='none';
+  document.getElementById('net-preview').style.display='none';
+  render(S.page);
+}
+
+function onTypeChange(){
+  const t=document.getElementById('l-type').value;
+  document.getElementById('cost-group').style.display=t==='special'?'':'none';
+  updateNetFee();
+}
+
+function updateNetFee(){
+  const fee=Number(document.getElementById('l-fee').value)||0;
+  const cost=Number(document.getElementById('l-cost').value)||0;
+  const isSpec=document.getElementById('l-type').value==='special';
+  const preview=document.getElementById('net-preview');
+  if(isSpec && (fee>0||cost>0)){
+    preview.style.display='';
+    document.getElementById('np-fee').textContent=fmt(fee);
+    document.getElementById('np-cost').textContent='-'+fmt(cost);
+    document.getElementById('np-net').textContent=fmt(fee-cost);
+  } else {
+    preview.style.display='none';
+  }
+}
+
+function openDetail(id){
+  const l=S.lessons.find(x=>x.id===id); if(!l) return;
+  const net=l.fee-(l.cost||0);
+  const typeLabel={'private':'개인 레슨','group':'단체 강습','special':'특강'}[l.type]||l.type;
+  const typeColor={'private':'b-blue','group':'b-green','special':'b-purple'}[l.type]||'b-gray';
+  document.getElementById('dt-title').textContent=`${typeLabel} — ${l.member}`;
+  document.getElementById('dt-del-btn').onclick=()=>{if(confirm('삭제할까요?')){delLesson(id);closeM('modal-detail');}};
+  document.getElementById('dt-body').innerHTML=`
+    <div class="dt-row"><span class="dt-lbl">날짜 / 시간</span><span class="dt-val">${l.date} ${l.time?l.time:''}</span></div>
+    <div class="dt-row"><span class="dt-lbl">종류</span><span class="badge ${typeColor}">${typeLabel}</span></div>
+    ${l.place?`<div class="dt-row"><span class="dt-lbl">장소</span><span class="dt-val">📍 ${l.place}</span></div>`:''}
+    <div style="background:var(--surface2);border-radius:10px;padding:14px;margin:12px 0">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px">
+        <span style="color:var(--muted)">수강료</span><span class="amt pos">${fmt(l.fee)}</span>
+      </div>
+      ${l.cost?`<div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px">
+        <span style="color:var(--muted)">대관비</span><span class="amt" style="color:var(--red)">-${fmt(l.cost)}</span>
+      </div>`:''}
+      <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid var(--border);font-weight:700;font-size:14px">
+        <span>${l.cost?'순수익':'수입'}</span><span class="net-val">${fmt(net)}</span>
+      </div>
+    </div>
+    ${l.memo?`<div class="dt-row"><span class="dt-lbl">메모</span><span class="dt-val" style="font-size:12px">${l.memo}</span></div>`:''}
+  `;
+  openM('modal-detail');
+}
+function saveSalary(){
+  const x={id:Date.now(), date:document.getElementById('s-date').value, source:document.getElementById('s-src').value,
+    desc:document.getElementById('s-desc').value, amount:Number(document.getElementById('s-amt').value)||0,
+    status:document.getElementById('s-stat').value};
+  S.salary.push(x); save(); closeM('modal-salary');
+  ['s-date','s-desc','s-amt'].forEach(i=>document.getElementById(i).value='');
+  render(S.page);
+}
+function saveCoupang(){
+  const x={id:Date.now(), date:document.getElementById('cp-d').value, orders:Number(document.getElementById('cp-o').value)||0,
+    income:Number(document.getElementById('cp-i').value)||0, distance:Number(document.getElementById('cp-dist').value)||0,
+    memo:document.getElementById('cp-m').value};
+  S.coupang.push(x); save(); closeM('modal-coupang');
+  ['cp-d','cp-o','cp-i','cp-dist','cp-m'].forEach(i=>document.getElementById(i).value='');
+  render(S.page);
+}
+function saveMember(){
+  const x={id:Date.now(), name:document.getElementById('m-nm').value.trim(), phone:document.getElementById('m-ph').value,
+    type:document.getElementById('m-tp').value, fee:Number(document.getElementById('m-fee').value)||0,
+    start:document.getElementById('m-st').value, note:document.getElementById('m-nt').value};
+  if(!x.name){ alert('이름을 입력하세요.'); return; }
+  S.members.push(x); save(); closeM('modal-member');
+  ['m-nm','m-ph','m-fee','m-st','m-nt'].forEach(i=>document.getElementById(i).value='');
+  render(S.page);
+}
+function saveMemo(){ S.memo=document.getElementById('d-memo').value; save(); }
+function delLesson(id){ S.lessons=S.lessons.filter(l=>l.id!==id); save(); render(S.page); }
+function delSalary(id){ S.salary=S.salary.filter(s=>s.id!==id); save(); render(S.page); }
+function delCoupang(id){ S.coupang=S.coupang.filter(c=>c.id!==id); save(); render(S.page); }
+function delMember(id){ if(confirm('삭제할까요?')){ S.members=S.members.filter(m=>m.id!==id); save(); render(S.page); } }
+
+// ═══════════════════════════════════
+// MONTH TABS
+// ═══════════════════════════════════
+function buildTabs(elId){
+  const el=document.getElementById(elId), now=new Date();
+  el.innerHTML='';
+  for(let i=-2;i<=1;i++){
+    const d=new Date(now.getFullYear(),now.getMonth()+i,1);
+    const y=d.getFullYear(), m=d.getMonth();
+    const btn=document.createElement('button');
+    btn.className='mtab'+(y===S.selY&&m===S.selM?' active':'');
+    btn.textContent=`${y}.${String(m+1).padStart(2,'0')}`;
+    btn.onclick=()=>{ S.selY=y; S.selM=m; save(); render(S.page); };
+    el.appendChild(btn);
+  }
+}
+
+// ═══════════════════════════════════
+// RENDER
+// ═══════════════════════════════════
+function render(id){
+  const fns={ dashboard:rDash, calendar:rCal, private:()=>rLesson('private'), group:()=>rLesson('group'), special:()=>rLesson('special'), salary:rSalary, coupang:rCoupang, members:rMembers };
+  fns[id]?.();
+  const n=new Date();
+  document.getElementById('sb-month').textContent=`${n.getFullYear()}.${String(n.getMonth()+1).padStart(2,'0')}`;
+}
+
+// ─── DASHBOARD ───────────────────
+function rDash(){
+  const lm=inMonthNow(S.lessons), cm=inMonthNow(S.coupang), sm=inMonthNow(S.salary);
+  const lt=lm.reduce((s,l)=>s+(l.fee-(l.cost||0)),0), ct=cm.reduce((s,c)=>s+c.income,0), st=sm.reduce((s,i)=>s+i.amount,0);
+  document.getElementById('d-stats').innerHTML=`
+    <div class="stat c-blue"><div class="slbl">레슨 수입</div><div class="sval">${fmt(lt)}</div><div class="ssub">개인+단체+특강</div><div class="stag up">${lm.length}건</div></div>
+    <div class="stat c-green"><div class="slbl">총 수입</div><div class="sval">${fmt(lt+ct+st)}</div><div class="ssub">모든 수입 합산</div><div class="stag neu">이번달</div></div>
+    <div class="stat c-orange"><div class="slbl">쿠팡 배송</div><div class="sval">${fmt(ct)}</div><div class="ssub">배송 수입</div><div class="stag neu">${cm.length}회</div></div>
+    <div class="stat c-dark"><div class="slbl">등록 회원</div><div class="sval">${S.members.length}</div><div class="ssub">명</div><div class="stag neu">총 회원수</div></div>`;
+
+  const td=today(), tl=S.lessons.filter(l=>l.date===td).sort((a,b)=>a.time.localeCompare(b.time));
+  document.getElementById('d-cnt').textContent=tl.length+'개';
+  document.getElementById('d-today').innerHTML=tl.length===0
+    ?'<div style="color:var(--muted);font-size:13px;text-align:center;padding:18px 0">오늘 예정된 레슨이 없어요 🏊</div>'
+    :tl.map(l=>`<div class="lrow l5"><div class="ltime">${l.time||'--:--'}</div><div style="font-weight:500">${l.member}</div><div>${typeBadge(l.type)}</div><div class="lfee amt pos fcol">${fmt(l.fee)}</div><div></div></div>`).join('');
+
+  const srcs={'레슨':lt,'쿠팡':ct,'급여':sm.filter(s=>s.source==='수영장 급여').reduce((a,s)=>a+s.amount,0)};
+  const maxV=Math.max(...Object.values(srcs),1);
+  const cols={'레슨':'var(--accent)','쿠팡':'var(--orange)','급여':'var(--green)'};
+  document.getElementById('d-bars').innerHTML=Object.values(srcs).some(v=>v>0)
+    ?Object.entries(srcs).map(([k,v])=>`<div class="ibar"><div class="iblbl">${k}</div><div class="ibtrack"><div class="ibfill" style="width:${Math.round(v/maxV*100)}%;background:${cols[k]}"></div></div><div class="ibval">${fmt(v)}</div></div>`).join('')
+    :'<div style="color:var(--muted);font-size:13px;text-align:center;padding:12px 0">이번달 수입 내역이 없어요</div>';
+
+  const acs=['#1560ff','#12a66e','#f05c1e','#7c3aed'];
+  const rec=[...S.members].slice(-4).reverse();
+  document.getElementById('d-members').innerHTML=rec.length===0
+    ?'<div style="color:var(--muted);font-size:13px">등록된 회원이 없어요</div>'
+    :rec.map((m,i)=>`<div style="display:flex;align-items:center;gap:9px;margin-bottom:9px"><div style="width:30px;height:30px;border-radius:8px;background:${acs[i%4]};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">${m.name[0]}</div><div><div style="font-size:13px;font-weight:600">${m.name}</div><div style="font-size:11px;color:var(--muted)">${typeLabel(m.type)}</div></div><div style="margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--accent)">${fmt(m.fee)}</div></div>`).join('');
+  document.getElementById('d-memo').value=S.memo||'';
+}
+
+// ─── CALENDAR (with drag & drop) ─
+let dragId = null;
+
+function rCal(){
+  const y=S.calY, m=S.calM;
+  document.getElementById('cal-lbl').textContent=`${y}년 ${m+1}월`;
+  const fd=new Date(y,m,1).getDay(), dim=new Date(y,m+1,0).getDate(), td=today();
+  const dows=['일','월','화','수','목','금','토'];
+  let h=dows.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  for(let i=0;i<fd;i++) h+=`<div class="cal-cell empty"></div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dow=new Date(y,m,d).getDay();
+    const cls=[ds===td?'today':'', dow===0?'sun':dow===6?'sat':''].filter(Boolean).join(' ');
+    const dl=S.lessons.filter(l=>l.date===ds);
+    const dc=S.coupang.filter(c=>c.date===ds);
+    const typeEv={private:'ep',group:'eg',special:'es'};
+    const evs=[
+      ...dl.map(l=>`<div class="ev ${typeEv[l.type]||'ep'}" draggable="true" data-lid="${l.id}" title="${l.member} ${fmt(l.fee)}" ondragstart="onDS(event,${l.id})" ondragend="onDE(event)" onclick="event.stopPropagation()">${l.time?l.time.substring(0,5)+' ':''}${l.member}</div>`),
+      ...dc.map(c=>`<div class="ev ec" title="쿠팡 ${fmt(c.income)}">📦 ${fmt(c.income)}</div>`),
+    ].join('');
+    h+=`<div class="cal-cell ${cls}" data-date="${ds}" onclick="openLesson(undefined,'${ds}')" ondragover="onDOV(event)" ondragleave="onDL(event)" ondrop="onDP(event,'${ds}')">\
+<div class="daynum">${d}</div>${evs}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML=h;
+}
+function onDS(e,id){
+  dragId=id; e.dataTransfer.effectAllowed='move';
+  setTimeout(()=>{ const el=document.querySelector(`[data-lid="${id}"]`); if(el) el.classList.add('dragging'); },0);
+}
+function onDE(e){
+  document.querySelectorAll('.ev.dragging').forEach(el=>el.classList.remove('dragging'));
+  document.querySelectorAll('.cal-cell.drag-over').forEach(el=>el.classList.remove('drag-over'));
+  dragId=null;
+}
+function onDOV(e){ e.preventDefault(); e.dataTransfer.dropEffect='move'; e.currentTarget.classList.add('drag-over'); }
+function onDL(e){ e.currentTarget.classList.remove('drag-over'); }
+function onDP(e,ds){
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  if(dragId===null) return;
+  const l=S.lessons.find(x=>x.id===dragId);
+  if(l){ l.date=ds; save(); }
+  dragId=null; rCal();
+}
+function chM(d){ S.calM+=d; if(S.calM<0){S.calM=11;S.calY--;} if(S.calM>11){S.calM=0;S.calY++;} rCal(); }
+
+// ─── LESSON PAGES ─────────────────
+function rLesson(type){
+  const tabs={private:'pt',group:'gt',special:'st'};
+  const totIds={private:'pvt-tot',group:'grp-tot',special:'spc-tot'};
+  const listIds={private:'pvt-list',group:'grp-list',special:'spc-list'};
+  const statsIds={group:'g-stats',special:'s-stats'};
+  const statCls={private:'c-blue',group:'c-green',special:'c-purple'};
+
+  buildTabs(tabs[type]);
+  const f=S.lessons.filter(l=>{
+    const d=new Date(l.date);
+    return l.type===type && d.getFullYear()===S.selY && d.getMonth()===S.selM;
+  }).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+
+  const total=f.reduce((s,l)=>s+(l.fee-(l.cost||0)),0);
+  document.getElementById(totIds[type]).textContent='합계 '+fmt(total);
+
+  if(statsIds[type]){
+    const uniq=[...new Set(f.map(l=>l.member))].length;
+    document.getElementById(statsIds[type]).innerHTML=`
+      <div class="stat ${statCls[type]}"><div class="slbl">수업 횟수</div><div class="sval">${f.length}</div><div class="ssub">이번달</div></div>
+      <div class="stat ${statCls[type]}"><div class="slbl">참여 회원</div><div class="sval">${uniq}</div><div class="ssub">명</div></div>
+      <div class="stat ${statCls[type]}"><div class="slbl">순수익</div><div class="sval">${fmt(total)}</div><div class="ssub">이번달</div></div>`;
+  }
+
+  const listEl=document.getElementById(listIds[type]);
+  if(f.length===0){
+    listEl.innerHTML=`<div style="color:var(--muted);font-size:13px;text-align:center;padding:28px 0">이번달 기록이 없어요<br><small style="font-size:11px">위 버튼으로 추가하세요</small></div>`;
+    return;
+  }
+  listEl.innerHTML=f.map(l=>{
+    const net=l.fee-(l.cost||0);
+    const placeTag=l.place?`<span class="place-tag">📍${l.place}</span>`:'';
+    const costNote=l.cost?`<span class="cost-note" title="대관비 -${fmt(l.cost)}"> -${fmt(l.cost)}</span>`:'';
+    return `<div class="lrow l5" onclick="openDetail(${l.id})">
+      <div class="ltime">${fmtD(l.date)}<br><span style="font-size:10px">${l.time||''}</span></div>
+      <div style="font-weight:500">${l.member}<br><span style="display:flex;gap:4px;align-items:center;margin-top:2px">${placeTag}${l.memo?`<span style="font-size:11px;color:var(--muted)">${l.memo}</span>`:''}</span></div>
+      <div>${typeBadge(l.type)}</div>
+      <div class="lfee fcol"><span class="net-val">${fmt(net)}</span>${costNote}</div>
+      <button class="del" onclick="event.stopPropagation();delLesson(${l.id})">✕</button>
+    </div>`;}).join('');
+}
+
+// ─── SALARY ───────────────────────
+function rSalary(){
+  buildTabs('salt');
+  const sl=inMonth(S.salary), ll=inMonth(S.lessons), cl=inMonth(S.coupang);
+  const salA=sl.filter(s=>s.source==='수영장 급여').reduce((a,s)=>a+s.amount,0);
+  const lesA=ll.reduce((a,l)=>a+(l.fee-(l.cost||0)),0), cpA=cl.reduce((a,c)=>a+c.income,0);
+  const etcA=sl.filter(s=>s.source!=='수영장 급여').reduce((a,s)=>a+s.amount,0);
+  document.getElementById('sal-sum').innerHTML=`
+    <div class="sitem"><div class="slb">수영장 급여</div><div class="sv">${fmt(salA)}</div></div>
+    <div class="sitem"><div class="slb">레슨 순수익</div><div class="sv">${fmt(lesA)}</div></div>
+    <div class="sitem"><div class="slb">쿠팡</div><div class="sv">${fmt(cpA)}</div></div>
+    <div class="sitem"><div class="slb">총 수입</div><div class="sv ac">${fmt(salA+lesA+cpA+etcA)}</div></div>`;
+  const all=[...sl,
+    ...ll.map(l=>({id:'_'+l.id,date:l.date,source:typeLabel(l.type),desc:(l.place?'📍'+l.place+' · ':'')+l.member,amount:l.fee-(l.cost||0),status:'입금완료',_ro:true})),
+    ...cl.map(c=>({id:'_'+c.id,date:c.date,source:'쿠팡',desc:`배송 ${c.orders}건`,amount:c.income,status:'입금완료',_ro:true})),
+  ].sort((a,b)=>a.date.localeCompare(b.date));
+  document.getElementById('sal-tbody').innerHTML=all.length===0
+    ?`<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:28px">이번달 수입 내역이 없어요</td></tr>`
+    :all.map(s=>`<tr><td style="font-family:var(--mono);font-size:11px">${fmtD(s.date)}</td><td>${srcBadge(s.source)}</td><td style="color:var(--muted);font-size:12px">${s.desc||''}</td><td><span class="amt pos">${fmt(s.amount)}</span></td><td>${statusBadge(s.status)}</td><td>${s._ro?'':`<button class="del" onclick="delSalary(${s.id})">✕</button>`}</td></tr>`).join('');
+}
+
+// ─── COUPANG ──────────────────────
+function rCoupang(){
+  buildTabs('cpt');
+  const f=inMonth(S.coupang).sort((a,b)=>a.date.localeCompare(b.date));
+  const inc=f.reduce((s,c)=>s+c.income,0), dist=f.reduce((s,c)=>s+c.distance,0), avg=f.length?Math.round(inc/f.length):0;
+  document.getElementById('cp-stats').innerHTML=`
+    <div class="stat c-orange"><div class="slbl">배송 횟수</div><div class="sval">${f.length}회</div><div class="ssub">이번달</div></div>
+    <div class="stat c-green"><div class="slbl">배송 수입</div><div class="sval">${fmt(inc)}</div><div class="ssub">이번달</div></div>
+    <div class="stat c-blue"><div class="slbl">총 거리</div><div class="sval">${dist}km</div><div class="ssub">이번달</div></div>
+    <div class="stat c-dark"><div class="slbl">평균 단가</div><div class="sval">${fmt(avg)}</div><div class="ssub">회당</div></div>`;
+  document.getElementById('cp-list').innerHTML=f.length===0
+    ?`<div style="color:var(--muted);font-size:13px;text-align:center;padding:28px 0">배송 기록이 없어요 📦</div>`
+    :f.map(c=>`<div class="drow"><div><span style="font-family:var(--mono);font-size:11px">${fmtD(c.date)}</span>${c.memo?` <span style="font-size:11px;color:var(--muted)">${c.memo}</span>`:''}</div><div style="font-family:var(--mono)">${c.orders}건</div><div class="dcol" style="font-family:var(--mono)">${c.distance}km</div><div class="amt pos">${fmt(c.income)}</div><button class="del" onclick="delCoupang(${c.id})">✕</button></div>`).join('');
+}
+
+// ─── MEMBERS ──────────────────────
+let mF='all';
+function filterM(t,el){ mF=t; document.querySelectorAll('.mfbtn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); rMembers(); }
+function rMembers(){
+  const f=mF==='all'?S.members:S.members.filter(m=>m.type===mF);
+  const acs=['#1560ff','#12a66e','#f05c1e','#7c3aed','#0891b2','#dc2626'];
+  document.getElementById('m-cards').innerHTML=f.length===0
+    ?`<div style="color:var(--muted);font-size:13px;grid-column:1/-1;text-align:center;padding:40px 0">등록된 회원이 없어요 🏊<br><small>추가 버튼으로 회원을 등록하세요</small></div>`
+    :f.map((m,i)=>`<div class="mcard"><div class="mavt" style="background:${acs[i%6]}">${m.name[0]}</div><div class="mname">${m.name}</div><div class="mmeta">${m.phone||'연락처 없음'}</div><div style="display:flex;gap:4px;flex-wrap:wrap">${typeBadge(m.type)}${m.fee?`<span class="badge b-gray">${fmt(m.fee)}/월</span>`:''}</div>${m.note?`<div class="mnote">${m.note}</div>`:''}<div style="margin-top:9px;display:flex;justify-content:flex-end"><button class="del" onclick="event.stopPropagation();delMember(${m.id})">삭제</button></div></div>`).join('');
+}
+
+// ─── CALC ─────────────────────────
+function calc(){
+  const n=Number(document.getElementById('c-n').value)||0, p=Number(document.getElementById('c-p').value)||0, t=n*p;
+  document.getElementById('c-r').textContent=fmt(t);
+  document.getElementById('c-sp').innerHTML=t>0?[2,3].map(x=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px;text-align:center"><div style="font-size:9.5px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px">${x}회 분할</div><div style="font-weight:700;font-family:var(--mono);font-size:14px">${fmt(Math.round(t/x))}</div></div>`).join(''):'';
+}
+
+
+</script>
+</body>
+</html>
